@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  mount ActionCable.server => '/cable'
   mount Rswag::Ui::Engine => '/'
   mount Rswag::Api::Engine => '/api-docs'
   
@@ -9,6 +10,7 @@ Rails.application.routes.draw do
       get '/search', to: 'users#search'
       
       resources :users 
+      resources :messages
     end
   end
   

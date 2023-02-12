@@ -9,5 +9,7 @@ class User < ApplicationRecord
 
   mount_uploader :avatar, ImageUploader
 
+  has_many :messages, dependent: :destroy
+
   scope :search, ->(query) { query.present? ? where("username ILIKE ? OR first_name ILIKE ? OR last_name ILIKE ?", "%#{query}%", "%#{query}%", "%#{query}%") : none }
 end
