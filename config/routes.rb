@@ -1,16 +1,18 @@
 Rails.application.routes.draw do
 
   mount ActionCable.server => '/cable'
-  mount Rswag::Ui::Engine => '/'
-  mount Rswag::Api::Engine => '/api-docs'
-  
+
   namespace :api do
     namespace :v1 do
 
       get '/search', to: 'users#search'
+
+      get '/users/:id', to: 'users#show'
       
-      resources :users 
-      resources :messages
+      resources :chat_rooms do 
+        get '/messages', to: 'messages#index'
+      end
+      resources :users, only: [:index, :show, :update, :destroy] 
     end
   end
   
@@ -31,7 +33,6 @@ Rails.application.routes.draw do
       devise_scope :user do
         get '/auth/me', to: 'api/v1/users#me', as: :user_root
         get '/auth/users', to: 'api/v1/users#index', as: :users
-        get '/auth/users/:id', to: 'api/v1/users#show', as: :user
         get '/users/show/:username', to: 'api/v1/users#show_by_username', as: :show_by_username
         put '/auth/users/:id', to: 'api/v1/users#update', as: :update_user
         delete '/auth/users', to: 'api/v1/users#destroy', as: :destroy_user

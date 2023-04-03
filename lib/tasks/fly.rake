@@ -10,8 +10,12 @@ namespace :fly do
   #  - changes to the filesystem made here are DISCARDED
   #  - full access to secrets, databases
   #  - failures here prevent deployment
+  # drop database, create database, migrate
+
   task :release => 'db:migrate'
 
+  # flyctl postgres db
+  # flyctl postgres db:drop
   # SERVER step:
   #  - changes to the filesystem made here are deployed
   #  - full access to secrets, databases
