@@ -44,7 +44,7 @@ module Api
         end
     
         def message_params
-          params.permit(:body, :user_id, :chat_room_id)
+          params.permit(:body, :user_id, :chat_room_id, :created_at, :updated_at)
         end
     end    
   end

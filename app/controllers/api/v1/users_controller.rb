@@ -7,7 +7,7 @@ module Api
       before_action :set_user_by_username, only: [:show_by_username]
 
       def index
-        @users = User.all
+        @users = User.all.where.not(id: current_user.id)
         render json: @users, each_serializer: UserSerializer, status: :ok
       end
 

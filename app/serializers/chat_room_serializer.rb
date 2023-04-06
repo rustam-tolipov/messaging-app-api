@@ -1,5 +1,5 @@
 class ChatRoomSerializer < ActiveModel::Serializer
-  attributes :id, :title, :is_private, :image, :user_id, :users_count, :last_message, :username, :unread_messages_count
+  attributes :id, :title, :is_private, :image, :user_id, :users_count, :last_message, :username, :unread_messages_count, :last_message_at, :members
 
   def user_id
     if object.is_private?
@@ -8,9 +8,7 @@ class ChatRoomSerializer < ActiveModel::Serializer
   end
 
   def users_count
-    if object.is_private?
-      object.users.count
-    end
+    members.count
   end
 
   def image
@@ -38,5 +36,13 @@ class ChatRoomSerializer < ActiveModel::Serializer
 
   def unread_messages_count
     object.unread_messages(current_user)
+  end
+
+  def last_message_at
+    object.messages.last.created_at if object.messages.last
+  end
+
+  def members
+    object.users.ids
   end
 end

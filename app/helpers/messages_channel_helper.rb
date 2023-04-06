@@ -38,8 +38,8 @@ module MessagesChannelHelper
     ActionCable.server.broadcast(channel, {
     status: "subscribed_to_#{chat_room.id}",
     users_count: chat_room.users.count,
-    chat_room_users: chat_room.users.map{|user| {id: user.id, username: user.username, last_seen: user.last_seen}},
     is_private: chat_room.is_private,
+    members: @chat_room.users.ids,
                                 })
   end
 

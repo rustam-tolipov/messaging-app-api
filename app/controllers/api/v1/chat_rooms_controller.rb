@@ -5,7 +5,7 @@ module Api
       before_action :authenticate_user!, only: %i[ index create update destroy ]
     
       def index
-        @chat_rooms = ChatRoom.public_room
+        @chat_rooms = ChatRoom.public_room.order(created_at: :desc)
         @private_chat_rooms = ChatRoom.where("title LIKE ?", "%#{current_user.id}%").where(is_private: true)
         @direct_messages = []
         @allUsers = User.all
@@ -43,12 +43,26 @@ module Api
       end
     
       def create
-        @chat_room = ChatRoom.new(chat_room_params)
+        @chat_room = ChatRoom.new(
+          title: params[:title],
+          is_private: params[:is_private],
+          image: params[:image]
+        )
+
+        @participant = params[:participant]
+        @participant = @participant.first.split(",")
     
         if @chat_room.save
+
+          @chat_room.users << current_user
+
+          @participant.each do |participant|
+            @chat_room.users << User.where(id: participant).where.not(id: current_user.id).first
+          end
+
           render json: @chat_room, status: :created
         else
-          render json: @chat_room.errors, status: :unprocessable_entity
+          render json: @chat_room.errors.full_messages, status: :unprocessable_entity
         end
       end
     
@@ -68,9 +82,10 @@ module Api
         def set_chat_room
           @chat_room = ChatRoom.find(params[:id])
         end
+
     
         def chat_room_params
-          params.permit(:title, :is_private, :image)
+          params.permit(:title, :is_private, :image, :participant => [])
         end
     end    
   end
